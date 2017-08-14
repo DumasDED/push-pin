@@ -1,0 +1,29 @@
+Break the string into constituents:
+
+'Bushwick, Brooklyn, NY' --> ['Bushwick', 'Brooklyn', 'NY']
+
+
+Starting at the END of the array, search for a state:
+
+data.find_state('NY') --> <Location.NewYork>
+
+- What if it returns two states?
+- What if it doesn't return any state?
+
+
+Once that's been found, take the previous string in the array
+and use it to find a city in that state:
+
+state<Location.NewYork>.find_city('Brooklyn') --> <Location.NewYork.Brooklyn>
+
+
+IF IT CAN'T FIND A STATE:
+- Using the first string, search the dataset for matching locations
+- Store the matching admin code combinations in an array
+- Iterate through the remaining strings:
+    - Search the dataset for matching locations
+    - Compare admin codes to what is already in the stored array
+    - Eliminate any combinations that are not common to the result set
+- If the array is reduced to zero, fail
+- If the array is reduced to more than one, repeat the process using exact
+  matches instead of approximate ones
