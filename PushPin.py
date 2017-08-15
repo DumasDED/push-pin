@@ -1,16 +1,17 @@
 import json
 import itertools
 
-
+# TODO: split data out between states and non-states
 with open('json/locations.json') as f:
     places = json.load(f)
 
-search = ['Garwood', 'New Jersey']
+search = ['Garwood', 'NJ']
 
 states = [place for place in places if place['featurecode'] == 'ADM1']      # All states
 
 for string in search:
 
+    # TODO: define function that encapsulates if logic for different search strings
     codes = [place['admincode']
              for place in places
              if place['name'] == string
@@ -22,10 +23,24 @@ for string in search:
 
 states = [k for k, v in itertools.groupby(states)]                          # Remove duplicate references
 
-for state in states:
-    print state['name']
+cities = [place                                                             # All cities in filtered states
+          for place in places
+          for state in states
+          if place['featureclass'] == 'P'
+          and state['admincode'] in place['admincode']]
 
-cities = [place for place in places if place['featureclass'] == 'P']        # All cities
+cities = [k for k, v in itertools.groupby(cities)]
+
+city_candidates = []
+
+for string in search:
+
+    city_candidates.extend([city for city in cities
+                            if city['name'] == string
+                            or string in city['alternatenames']])
+
+for city in city_candidates:
+    print city['name'], city['admincode'], city['featurecode']
 
 
 """
