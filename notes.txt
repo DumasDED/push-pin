@@ -46,3 +46,43 @@ class FeatureClass:
     PPLX = 12
     PPLS = 13
     PPLL = 14
+
+
+
+My methodology needs work.
+
+The problem with what I'm doing now is that I'm utilizing the entire search
+string to look for both a state and a city. That means that, for a search string
+of "Brooklyn, New York", the list of possible cities includes all matches for
+"Brooklyn" AND all matches for "New York". That's a lot more cities than I need,
+and in fact when I do it that way and then pick the highest administrative level
+out of those left, I end up getting Albany, NY.
+
+What I need to do instead: there are a limited number of states. Those should be
+very easy to match by comparison. I need to find a state first, and then REMOVE
+THE STRING THAT MATCHES THE STATE from the search string. Thus, once I've found
+a match for the state of New York, I need to reduce my search string so that it
+only includes "Brooklyn".
+
+OK. That's done.
+
+With states a more fail-fast approach is feasible because there are few enough
+states that I can realistically expect to match either one or none. With cities,
+however, there are likely to be several matches for a given search string, and
+conceivably any one of them could be the name of the actual city. Or it could be
+that none of them are the name of the city.
+
+The original strategy I had in mind is to cross-reference the results produced by
+any given search string and only retain the intersection of admin codes between
+them. So for example, if the results of "Bushwick" return three results and the
+results of "Brooklyn" return two results, and one result from each of those sets
+includes a location with an admin code of "NY.047", retain both of those results
+and discard the rest.
+
+Right now all I'm doing is just accumulating all the matches. That's not practical
+by comparison. I need to at least eliminate some of them.
+
+I think what I was originally doing (or intending to do) was to accumulate all
+the potential candidates, count the occurrences of each admin code, and keep
+only those options which corresponded to the most common admin code (or codes,
+though hopefully not more than one).
