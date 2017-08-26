@@ -86,3 +86,49 @@ I think what I was originally doing (or intending to do) was to accumulate all
 the potential candidates, count the occurrences of each admin code, and keep
 only those options which corresponded to the most common admin code (or codes,
 though hopefully not more than one).
+
+At this point the algorithm is pretty robust. It can successfully narrow down
+most of the searches I throw at it. It can deduce Brooklyn from just "Brooklyn".
+It can find Berkeley without assuming it means Oakland. It can find Highland Park,
+though it finds two different instances of it.
+
+One of the most glaring inaccuracies at this point is "Richmond, VA". This returns
+Warsaw, VA, for some reason, which I think has to do with the fact that the admin
+code associated with Warsaw happens to be more frequent than that for the city of
+Richmond itself, and because Warsaw is the highest administrative division for that
+admin code, that's what gets selected. This would seem to indicate that the most
+frequent admin code is not always a safe bet.
+
+These are the cities that the search algorithm first finds:
+
+        Port Richmond VA.101 PPL
+        Richmond VA.760 PPLA
+        South Richmond VA.159 PPL
+        Warsaw VA.159 PPLA2
+
+These results would suggest that I should be filtering by similarities in names. I
+could see this being a potential use for fuzzy matching, but that could mean comparing
+every city name to every other city name, which seems cumbersome.
+
+Alternatively I could do a fuzzy compare of city names to the search string, but
+I don't love the idea of going back to the search string.
+
+itertools has a combinations function that will pair up elements of a list into
+unique combinations. That could be a really efficient means of comparing every
+name to every other name. Then I could use fuzzywuzzy to do partial ratio matches
+and score each city for each ratio.
+
+>>> fuzz.partial_ratio('Richmond', 'South Richmond')
+100
+>>> fuzz.partial_ratio('Warsaw', 'South Richmond')
+0
+>>> fuzz.partial_ratio('Warsaw', 'Richmond')
+0
+
+In this case Warsaw would cumulatively receive a score of zero, while the others
+would receive cumulative scores well above 100. From that logic I could simply discard
+everything with a 0 score and keep the rest. That seems dangerous, though, and in
+any case that's only really applicable in this context - I don't know that it will
+be applicable in other contexts.
+
+Time for bed anyway.
