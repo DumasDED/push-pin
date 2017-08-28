@@ -132,3 +132,30 @@ any case that's only really applicable in this context - I don't know that it wi
 be applicable in other contexts.
 
 Time for bed anyway.
+
+OK. Fuzzy matching is integrated and it's fixed the above problem really well. Now when
+I search for "Richmond, VA" it compares all the result names to each other and discards
+Warsaw, ultimately landing on the actual Richmond, VA as the lone result.
+
+I incorporated some statistical analysis in order to figure out which options to eliminate
+from the running based on fuzzy matching scores. Basically I opted to eliminate any options
+that were outside of one standard deviation from the mean. This worked just fine for
+eliminating Warsaw from the Richmond search, but it fried the (admittedly rather aberrant)
+search for "Philadelphia, PA, Boston, MA" (this is the string that Drug Dogs has listed
+for their hometown). Essentially this was eliminating both the major metropolitan options
+that turned up in the search, at which point I realized that in eliminating *everything*
+that was more than one standard deviation from the mean, I was eliminating everything that
+was *above* one standard deviation from the mean - in other words, everything that was an
+exceptionally GOOD match. For that I changed it to eliminate only those options that were
+more than one standard deviation BELOW the mean. That fixed the Boston/Philly search. Now
+both of them work just as well.
+
+The problem I'm encountering now for searches like "Oakland, CA" and "Garwood, NJ" is that
+by the time I get to the fuzzy matching portion of the program, the list of options has
+already been reduced to one, at which point there's no reason to do fuzzy matching anyway.
+Not surprisingly, this throws an error when the fuzzy matching doesn't have any options
+to compare (a good problem to have, in all fairness). At this point I should consider
+options for exiting the program as soon as the list is reduced to one option. This also
+raises questions about how ultimately I want this to be structured, since I'll eventually
+be incorporating this into a function rather than a command line script.
+

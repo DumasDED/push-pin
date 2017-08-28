@@ -1,9 +1,12 @@
+import sys
 import string
 import json
-import itertools
+import numpy
+import math
 
 from collections import Counter
 from datetime import datetime
+from itertools import combinations
 from fuzzywuzzy import fuzz
 from FeatureCode import FeatureCode
 
@@ -18,7 +21,9 @@ with open('json/nonstates.json') as f:
 
 print datetime.now() - start, ": Loading data"
 
-search = ['Crown Heights']                                           # Search string (split)
+# search = ['Crown Heights']                                         # Search string (split)
+
+search = sys.argv[1].split(', ')
 
 print datetime.now() - start, ": Creating states list"
 
@@ -35,7 +40,7 @@ for string in search:
         search.pop(search.index(string))
         state_candidates.extend(x)
 
-if state_candidates != []:
+if state_candidates:
     states = state_candidates
 
 print datetime.now() - start, ": Filtering states list by search criteria"
@@ -62,6 +67,35 @@ print datetime.now() - start, ": Filtering cities list for search string"
 
 for city in city_candidates:
     print '\t', city['name'], city['admincode'], city['featurecode']
+
+combos = combinations(city_candidates, 2)
+
+for combo in combos:
+    score = fuzz.partial_ratio(combo[0]['name'], combo[1]['name'])
+    if 'score' not in combo[0]:
+        combo[0]['score'] = score
+    else:
+        combo[0]['score'] += score
+    if 'score' not in combo[1]:
+        combo[1]['score'] = score
+    else:
+        combo[1]['score'] += score
+
+scores = [c['score'] for c in city_candidates]
+mean = numpy.mean(scores)
+std = numpy.std(scores)
+
+print datetime.now() - start, ": Using fuzzy matching to filter cities list"
+
+print '\tMEAN', mean
+print '\tSTD DEV', std
+
+for city in city_candidates:
+    print '\t', city['name'], city['score']
+
+for i, c in enumerate(city_candidates):
+    if (c['score'] - mean) / std < -1:
+        del city_candidates[i]
 
 codes = Counter([znk['admincode'] for znk in city_candidates])
 maxcount = max([codes[i] for i in codes.keys()])
