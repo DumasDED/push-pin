@@ -158,4 +158,3 @@ to compare (a good problem to have, in all fairness). At this point I should con
 options for exiting the program as soon as the list is reduced to one option. This also
 raises questions about how ultimately I want this to be structured, since I'll eventually
 be incorporating this into a function rather than a command line script.
-

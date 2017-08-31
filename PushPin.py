@@ -1,8 +1,6 @@
 import sys
-import string
 import json
 import numpy
-import math
 
 from collections import Counter
 from datetime import datetime
@@ -12,16 +10,14 @@ from FeatureCode import FeatureCode
 
 start = datetime.now()
 
-# TODO: split data out between states and non-states
 with open('json/states.json') as f:
     states = json.load(f)
 
+# TODO: Add state property to non-states data objects
 with open('json/nonstates.json') as f:
     places = json.load(f)
 
 print datetime.now() - start, ": Loading data"
-
-# search = ['Crown Heights']                                         # Search string (split)
 
 search = sys.argv[1].split(', ')
 
