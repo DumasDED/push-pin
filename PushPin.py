@@ -1,3 +1,4 @@
+import os
 import json
 import numpy
 import logging
@@ -10,12 +11,13 @@ from FeatureCode import FeatureCode
 logging.basicConfig(level=logging.CRITICAL, format='%(asctime)s %(message)s')
 logger = logging.getLogger(__name__)
 
+directory, filename = os.path.split(__file__)
 
-with open('json/states.json') as f:
+with open(os.path.join(directory, 'json', 'states.json')) as f:
     states = json.load(f)
 
 # TODO: Add state property to non-states data objects
-with open('json/nonstates.json') as f:
+with open(os.path.join(directory, 'json', 'nonstates.json')) as f:
     places = json.load(f)
 
 filtered_states = []
