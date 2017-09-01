@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import numpy
 import logging
@@ -31,7 +32,8 @@ def locate(search_string):
     global cities
     global search
 
-    search = search_string.split(', ')
+    search_string = re.sub(r'\s*[,/|;+]\s*', r',', search_string)
+    search = search_string.split(',')
 
     filter_states()
     filter_cities()
@@ -78,7 +80,7 @@ def filter_cities():
         filter_cities_by_highest_admin_level,
     ):
         func()
-        log_details()
+        log_city_details()
         if len(cities) <= 1:
             break
 
@@ -107,6 +109,8 @@ def filter_states():
         filtered_states = state_candidates
     else:
         filtered_states = states[:]
+
+    log_state_details()
 
 
 def filter_states_by_city():
@@ -227,7 +231,15 @@ def filter_cities_by_highest_admin_level():
         cities = city_candidates
 
 
-def log_details():
+def log_city_details():
     logger.debug('\tCount: %i', len(cities))
     for city in cities[:12]: logger.debug('\t%s %s %s', city['name'], city['admincode'], city['featurecode'])
     if len(cities) > 12: logger.debug('\t...')
+
+
+def log_state_details():
+    global filtered_states
+
+    logger.debug('\tCount: %i', len(filtered_states))
+    for state in filtered_states[:12]: logger.debug('\t%s', state['name'])
+    if len(filtered_states) > 12: logger.debug('\t...')
