@@ -158,3 +158,11 @@ to compare (a good problem to have, in all fairness). At this point I should con
 options for exiting the program as soon as the list is reduced to one option. This also
 raises questions about how ultimately I want this to be structured, since I'll eventually
 be incorporating this into a function rather than a command line script.
+
+Got it wrapped up into a function. Split all the subprocesses out into functions as well.
+This reminds me of the way I used to code before I started learning C# and object oriented
+stuff. It rankles me a little bit - the same things that bugged me about it then are bugging
+me about it now. But it works. That's more important than anything, ultimately.
+
+I also added a setup script so it can be installed. Took some doing but the thing works like
+a charm now. Pretty impressed with myself.
